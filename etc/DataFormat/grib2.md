@@ -29,3 +29,42 @@ wgrib2などが有名のよう。
 気象業務支援センターからもデコーダー (grib2_dec) が手に入る？
 > wgrib2: https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/
 > grib2_dec: http://www.eqh.dpri.kyoto-u.ac.jp/~masumi/sac/grib2.htm
+
+### wgrib2をMacで使う
+
+ソースからコンパイルする (MacPortsで公開されていたようだが2019/04現在は`404`だった)  
+Xcode付随のgccではコンパイルできないため、別途gccをインストールする必要あり。
+（gccのバージョンが新しくなっているためmakefileなどの修正も必要）
+> https://bovineaerospace.wordpress.com/2017/08/20/how-to-install-wgrib2-in-osx/
+
+
+```
+$ brew install gcc
+$ alias gcc=/usr/local/bin/gcc-8
+$ curl -o wgrib2.tgz https://www.ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz
+$ tar xzvf wgrib2.tgz
+$ cd grib2
+$ vim makefile
+  : 以下をコメントアウトしフルパスに変更（/usr/local/bin/を付与）
+  # export CC=gcc
+  # export FC=gfortran
+  : 以下をコメントアウト
+  # export LDFLAGS="-L${lib}" && cd "${pngdir}" && export CPPFLAGS="${wCPPFLAGS}" && ${MAKE} -f scripts/makefile.darwin
+  : --fast-mathを-ffast-math書き換え
+  wCPPFLAGS+=-Wall -Wmissing-prototypes -Wold-style-definition -Werror=format-security --fast-math -O3
+$ tar -xvf libpng-1.2.57.tar.gz
+$ cd libpng-1.2.57/scripts/
+$ vim makefile.darwin
+  : CC=ccを以下に変更
+  CC=/usr/local/bin/gcc
+$ cd ../../
+$ tar -cf libpng-1.2.57.tar libpng-1.2.57
+$ gzip libpng-1.2.57.tar
+$ export CC=/usr/local/bin/gcc-8
+$ export CXX=/usr/local/bin/g++-8
+$ export F77=/usr/local/bin/gfortran
+$ export CFLAGS="-O2 -m64"
+$ export CXXFLAGS="-O2 -m64"
+$ export FFLAGS="-O2 -m64"
+$ make
+```
