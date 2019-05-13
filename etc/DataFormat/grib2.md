@@ -25,12 +25,16 @@
 
 ## データの取り扱い方法
 
-wgrib2などが有名のよう。
+wgrib2やecCodesなどのライブラリが有名なよう。
+
+### wgrib2
+
+アメリカ海洋大気庁 (NOAA) が開発しているライブラリ。
 気象業務支援センターからもデコーダー (grib2_dec) が手に入る？
 > wgrib2: https://www.cpc.ncep.noaa.gov/products/wesley/wgrib2/
 > grib2_dec: http://www.eqh.dpri.kyoto-u.ac.jp/~masumi/sac/grib2.htm
 
-### wgrib2をMacで使う
+#### wgrib2をMacで使う
 
 ソースからコンパイルする (MacPortsで公開されていたようだが2019/04現在は`404`だった)  
 Xcode付随のgccではコンパイルできないため、別途gccをインストールする必要あり。
@@ -67,4 +71,25 @@ $ export CFLAGS="-O2 -m64"
 $ export CXXFLAGS="-O2 -m64"
 $ export FFLAGS="-O2 -m64"
 $ make
+```
+
+### ecCodes
+
+ECMWF (ヨーロッパ中期予報センター) のecCodesも開発が盛んで利用しやすそう。  
+Betaだがpythonインターフェイスなども用意されていた。
+> ecCodes: https://confluence.ecmwf.int/display/ECC/ecCodes+Home
+> eccodes-python: https://github.com/ecmwf/eccodes-python
+
+#### DockerでecCodesを利用する
+
+Debian系向けにパッケージが公開されているのでapt-getでecCodesが取得でき環境構築しやすい。  
+dockerでインストールすると特に楽。
+
+``` sh
+$ sudo apt-get update
+$ sudo apt-get install libeccodes0
+$ pip install eccodes-python
+$ python -m eccodes selfcheck
+Found: ecCodes v2.7.0.
+Your system is ready.
 ```
